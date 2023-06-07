@@ -23,14 +23,20 @@ loss, accuracy = model.evaluate(x_test, y_test)
 print(f"Accuracy: {accuracy}")
 print(f"Loss: {loss}")
 
-model.save('digits.model')
-
 for x in range(1, 6):
-    img = cv.imread(f"{x}.png")[:, :, 0]
-    img = np.invert(np.array([img]))
-    prediction = model.predict(img)
-    print(f"The result is: {np.argmax(prediction)}")
+    img = cv.imread(f"C:/Users/shahy/PycharmProjects/HandwritingDetection/{x}.png", cv.IMREAD_GRAYSCALE)
+    if img is None:
+        print(f"Failed to load image: {x}.png")
+        continue
+    img = cv.resize(img, (28, 28))
+    img = np.invert(img)
+    img = np.expand_dims(img, axis=0)
+    img = img / 255.0
 
+    prediction = model.predict(img)
+    predicted_digit = np.argmax(prediction)
+
+    print(f"The result is: {predicted_digit}")
     plt.imshow(img[0], cmap=plt.cm.binary)
-    plt.title(f"Predicted Digit: {np.argmax(prediction)}")
+    plt.title(f"Predicted Digit: {predicted_digit}")
     plt.show()
